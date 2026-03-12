@@ -4,7 +4,7 @@ from langchain_core.documents import Document
 import context, model
 
 prompt_template = ChatPromptTemplate([
-    ("system", "You are an assistant providing answers to questions about the theater. In addition to your training data, use the additional context provided below to provide up-to-date information."),
+    ("human", "You are an assistant providing answers to questions about the theater. In addition to your training data, use the additional context provided below to provide up-to-date information."),
     ("human", "Question: {question}\nContext: {context}\nAnswer:")
 ])
 
