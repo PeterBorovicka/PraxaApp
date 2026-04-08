@@ -2,7 +2,9 @@ from langchain_community.chat_models import ChatOpenAI
 from typing import Optional, Any
 import os
 
-os.environ["OPENROUTER_API_KEY"] = "<your key here>"
+
+DEFAULT_MODEL = "openai/gpt-4o-mini"
+
 
 class ChatModel(ChatOpenAI):
     """
@@ -22,20 +24,31 @@ class ChatModel(ChatOpenAI):
             **kwargs
         )
 
-def get_model(model_name: str = "google/gemma-3-27b-it:free") -> ChatModel:
+
+def get_model(model_name: Optional[str] = None) -> ChatModel:
     """
     Gets a reference to a model
     
-    :param model_name: Name of the model
-    :type model_name: str
+    :param model_name: Name of the model. Defaults to OPENROUTER_MODEL or a paid model with better availability.
+    :type model_name: str | None
     :return: the model
     :rtype: ChatModel
     """
+    openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+    if not openrouter_api_key:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY is not set. Export it in your shell before starting the app."
+        )
+
+    selected_model = model_name or os.getenv("OPENROUTER_MODEL") or DEFAULT_MODEL
+
     return ChatModel(
-        model_name=model_name,
+        model_name=selected_model,
+        openai_api_key=openrouter_api_key,
         max_tokens=512,
         temperature=0
     )
+
 
 if __name__ == "__main__":
 # when run as a script, run some tests to demonstrate capabilities
